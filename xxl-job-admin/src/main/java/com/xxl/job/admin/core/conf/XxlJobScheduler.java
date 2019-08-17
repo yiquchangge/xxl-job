@@ -20,18 +20,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author xuxueli 2018-10-28 00:18:17
  */
-@Configuration
+@Component
+@DependsOn("xxlJobAdminConfig")
 public class XxlJobScheduler implements InitializingBean, DisposableBean {
     private static final Logger logger = LoggerFactory.getLogger(XxlJobScheduler.class);
 
@@ -112,7 +115,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
 
 
     // ---------------------- executor-client ----------------------
-    private static ConcurrentHashMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<String, ExecutorBiz>();
+    private static ConcurrentMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<String, ExecutorBiz>();
     public static ExecutorBiz getExecutorBiz(String address) throws Exception {
         // valid
         if (address==null || address.trim().length()==0) {
@@ -134,7 +137,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
                 LoadBalance.ROUND,
                 ExecutorBiz.class,
                 null,
-                5000,
+                3000,
                 address,
                 XxlJobAdminConfig.getAdminConfig().getAccessToken(),
                 null,
